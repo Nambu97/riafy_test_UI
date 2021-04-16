@@ -1,0 +1,224 @@
+<html>
+    <head>
+		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+		<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+		<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+		<link rel="stylesheet" type="text/css" href="css/util.css">
+		<link rel="stylesheet" type="text/css" href="css/main.css">
+       <title>National Stock Exchange</title>
+		<style>
+				
+					
+					@font-face {
+					font-family: Montserrat Web-Regular;
+					src: url(Font/Montserrat/Montserrat-Regular.ttf);
+					}
+					@font-face {
+					font-family: Montserrat Web-Medium;
+					src: url(Font/Montserrat/Montserrat-Medium.ttf);
+					}
+					@font-face {
+						font-family: Montserrat Web-Bold;
+						src: url(Font/Montserrat/Montserrat-Bold.ttf);
+					}
+					.overflow-projects_list {
+					max-height: 75%;
+					overflow: scroll;
+					overflow-x: hidden;
+
+					}
+					.overflow-projects_list::-webkit-scrollbar { width: 0 !important }
+					
+					
+
+					div.overflow-projects_list > div:nth-of-type(odd) {
+						background: #418CEE;
+					}
+
+					div.overflow-projects_list > div:nth-of-type(even) {
+						background: #7FB6FE;
+					}
+					
+					.overflow-block {
+					max-height: 60%;
+					overflow: scroll;
+					overflow-x: hidden;
+
+					}
+					.overflow-block::-webkit-scrollbar { width: 0 !important }
+
+					.card {
+					  box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
+					  transition: 0.3s;
+					  
+					  
+					}
+
+					.card:hover {
+					  box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2);
+					}
+
+					.container {
+					  padding: 2px 16px;
+					}
+					.head{
+						font-size: 17px;
+						color: brown;
+					}
+					.subhead{
+						font-size: 15px;
+						
+					}
+					
+				
+
+				::placeholder { /* Chrome, Firefox, Opera, Safari 10.1+ */
+				  color:  #838383;
+				  opacity: 1; /* Firefox */
+				}
+
+		</style>
+    </head>
+<body style="font-family:Montserrat Web-Regular; height:100%;overflow-x:hidden;background-color:#F2F6FF;"onload="get_all_company();">
+<div class="col-xs-12" style="">
+<br>
+</div>
+<div class="col-xs-12" style="text-align:center;">
+	<label style="font-family:Montserrat Web-Medium;color:#1167C9;font-size: 28px;">National Stock Exchange</label>
+</div>
+
+<div class="col-xs-12" style="padding-left: 400px;">
+	<label style="color:darkslateblue;font-size:21px;">Company</label><br>
+	<select type="dropdown" class="form-control" id="category" onchange="get_company_details();"  STYLE="background-color: white; height: 50px;width: 500px;font-size: 18px; background-color: white; box-shadow: 0px 3px 5px #0000001F; blux: 6px; border: 0;text-align:center;" >
+		<option value="SELECT">--SELECT--</option>
+	</select>
+</div>
+<div class="col-xs-12" style="">
+<br><br>
+</div>
+<div class="col-xs-12" style="display:none" id="for_guide">
+	<div class="" style="border-radius:25px;">
+		<div class="card-body" style="background-color: #FFFFFF;color:#434343;border-radius:25px;padding-top: 10px;padding-left: 10px;">
+		<div class="row" style="padding-left: 178px;">
+			<div class="col-xs-4" style="">
+				<label class="head">Market Cap</label><br/>
+				<label class="subhead" id="market_cap"></label><br/>
+				<label class="head" >Current Price</label><br/>
+				<label  class="subhead"id="current_price"></label><br/>
+				<label class="head">Stock P/E</label><br/>
+				<label  class="subhead"id="stock_p"></label><br/>
+				<label class="head">Debt</label><br/>
+				<label class="subhead" id="debt"></label><br/>
+			</div>
+			<div class="col-xs-4" style="">
+				<label class="head">Divident Yield</label><br/>
+				<label class="subhead" id="div_yield"></label><br/>
+				<label class="head">ROCE</label><br>
+				<label class="subhead" id="roce"></label><br/>
+				<label class="head">ROE</label><br/>
+				<label class="subhead" id="roe"></label><br/>
+			</div>
+			<div class="col-xs-4" style="">
+				<label class="head">Debt Equality</label><br/>
+				<label class="subhead" id="debt_equ"></label><br/>
+				<label class="head">Eps</label><br>
+				<label class="subhead" id="eps"></label><br/>
+				<label class="head">Reserves</label><br/>
+				<label class="subhead" id="reserves"></label><br/>
+			</div>
+		</div>
+	</div>
+</div>
+<script>
+function get_all_company()
+{	
+	$.post('http://localhost:4000/get_company',
+			{
+				
+			},
+			function(data)
+			{
+				console.log(data);
+				 var $select = $("#category");
+				 var j;
+				 $select.append($('<option value="SELECT">--SELECT--</option>'));
+				  for (j=0;j<data.length;j++) 
+				  {
+					$select.append($('<option></option>').val(data[j].ID).html(data[j].company_name));
+				  }
+				
+			}
+		)
+		
+	   
+	.fail(function (xhr)
+		{
+			switch (xhr.status)
+			{
+				case 500:
+					alert('Error.');
+					break;
+				default:
+					alert('Please Check Your Internet Connection');
+					break;
+			}
+		   
+		}
+	)
+}
+
+function get_company_details()
+{
+	var company_id = document.getElementById("category").value;
+	$.post('http://localhost:4000/get_company_details',
+			{
+				company_id:company_id
+			},
+			function(data)
+			{
+				console.log(data);
+				if(data.length>0)
+				{
+					document.getElementById("for_guide").style.display ="block";
+				}
+				else
+				{
+					document.getElementById("for_guide").style.display ="none";
+				}
+				document.getElementById("market_cap").innerHTML ="Rs."+data[0].market_cap;
+				document.getElementById("current_price").innerHTML ="Rs."+data[0].current_market_price;
+				document.getElementById("stock_p").innerHTML =data[0].stock_p_e+"%";
+				document.getElementById("debt").innerHTML ="Rs."+data[0].debt;
+				document.getElementById("div_yield").innerHTML =data[0].div_yield+"%";
+				document.getElementById("roce").innerHTML =data[0].roce+"%";
+				document.getElementById("roe").innerHTML =data[0].roe+"%";
+				document.getElementById("debt_equ").innerHTML =data[0].deb_to_equality+"%";
+				document.getElementById("eps").innerHTML ="Rs."+data[0].eps;
+				document.getElementById("reserves").innerHTML ="Rs."+data[0].reserves;
+				
+			}
+		)
+		
+	   .fail(function (xhr)
+		{
+			switch (xhr.status)
+			{
+				case 500:
+					alert('Error.');
+					break;
+				default:
+					alert('Please Check Your Internet Connection');
+					break;
+			}
+		   
+		}
+	)
+	
+}
+
+
+</script>
+</body>
+</html>
